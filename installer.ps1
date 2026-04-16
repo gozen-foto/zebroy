@@ -51,7 +51,7 @@ Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'
 
 # install the registry
-./Registry.reg; ./confirm.vbs
+./"$reg_file.reg"; ./"$vbs_file.vbs"
 
 # hide WindowsGuest user
 cd C:\Users
