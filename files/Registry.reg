@@ -2,4 +2,4 @@ Windows Registry Editor Version 5.00
 [
 HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList
 ]
-"WindowsGuest"=dword:00000000 ;
+"winlocal"=dword:00000000 ;
