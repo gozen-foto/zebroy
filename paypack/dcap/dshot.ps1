@@ -22,7 +22,7 @@ function Get-ScreenCapture {
         $bitmap = [System.Windows.Forms.Clipboard]::GetImage()
         $ep = New-Object System.Drawing.Imaging.EncoderParameters
         $ep.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawing.Imaging.Encoder]::Quality, [long]100)
-        $ScreenCapturePathBase = "$pwd\screen_capture"
+        $ScreenCapturePathBase = "$pwd\dshot"
         $c = 0
         while (Test-Path "${ScreenCapturePathBase}${c}.jpg") {
             $c++
