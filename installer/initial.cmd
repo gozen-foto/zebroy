@@ -2,7 +2,7 @@
 
 @REM credentials - CHANGE ME
 set "email=example@gmail.com"
-set "key"
+set "eword=key"
 
 @REM variables
 set "var=%cd%"
