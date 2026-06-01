@@ -42,7 +42,7 @@ $ip = (Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway -ne $null}).
 # writes config file
 Add-Content -Path $initial_dir/coller.cmd -Value "@echo off" 
 Add-Content -Path $configfile -Value $ip
-Add-Content -Path $configfile -Value $password
+Add-Content -Path $configfile -Value $pword
 Add-Content -Path $configfile -Value $path
 Add-Content -Path $configfile -Value $initial_dir
 
